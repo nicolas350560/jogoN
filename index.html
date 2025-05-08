@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogo de Futebol</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #4CAF50;
+    }
+
+    #campo {
+      position: relative;
+      width: 600px;
+      height: 400px;
+      background-color: #fff;
+      border: 2px solid #000;
+      overflow: hidden;
+    }
+
+    #bola {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background-color: #fff;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #gol {
+      position: absolute;
+      width: 100px;
+      height: 20px;
+      background-color: #f00;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    #placar {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="campo">
+    <div id="bola"></div>
+    <div id="gol"></div>
+    <div id="placar">Placar: <span id="pontos">0</span></div>
+  </div>
+  <script>
+    const bola = document.getElementById('bola');
+    const gol = document.getElementById('gol');
+    const placar = document.getElementById('placar');
+    const pontosSpan = document.getElementById('pontos');
+
+    let pontos = 0;
+    let bolaMovendo = false;
+
+    document.addEventListener('mousemove', (event) => {
+      if (bolaMovendo) return;
+
+      const bolaRect = bola.getBoundingClientRect();
+      const distancia = Math.sqrt(
+        Math.pow(event.clientX - bolaRect.x - bolaRect.width / 2, 2) +
+        Math.pow(event.clientY - bolaRect.y - bolaRect.height / 2, 2)
+      );
+
+      if (distancia < 100) {
+        bola.style.left = `${event.clientX - bolaRect.width / 2}px`;
+        bola.style.top = `${event.clientY - bolaRect.height / 2}px`;
+      }
+    });
+
+    bola.addEventListener('click', () => {
+      bolaMovendo = true;
+      const bolaRect = bola.getBoundingClientRect();
+      const golRect = gol.getBoundingClientRect();
+
+      if (
+        bolaRect.right > golRect.left &&
+        bolaRect.left < golRect.right &&
+        bolaRect.bottom > golRect.top &&
+        bolaRect.top < golRect.bottom
+      ) {
+        pontos++;
+        pontosSpan.textContent = pontos;
+        bola.style.left = '50%';
+        bola.style.top = '50%';
+        bola.style.transform = 'translate(-50%, -50%)';
+      }
+
+      setTimeout(() => {
+        bolaMovendo = false;
+      }, 500);
+    });
+  </script>
+</body>
+</html>
